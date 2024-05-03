@@ -56,12 +56,21 @@ pub mod tire_pressure_monitoring_system {
 
     #[cfg(test)]
     mod tests {
-        use super::{Alarm};
+        use super::Alarm;
 
         #[test]
         fn test_alarm_by_defaut_is_off() {
             let alarm = Alarm::new();
             assert_eq!(false, alarm.is_alarm_on());
+        }
+
+        #[test]
+        fn test_alarm_is_on_when_pressure_is_too_low() {
+            let alarm = Alarm::new();
+
+            alarm.check();
+
+            assert_eq!(true, alarm.is_alarm_on());
         }
     }
 }
