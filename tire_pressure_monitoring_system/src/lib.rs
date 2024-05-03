@@ -4,7 +4,7 @@ pub mod tire_pressure_monitoring_system {
     pub struct Alarm {
         low_pressure_threshold: f64,
         high_pressure_threshold: f64,
-        sensor: Sensor,
+        sensor: Box<dyn PressureSensor>,
         alarm_on: bool,
     }
 
@@ -13,7 +13,7 @@ pub mod tire_pressure_monitoring_system {
             Alarm {
                 low_pressure_threshold: 17.0,
                 high_pressure_threshold: 21.0,
-                sensor: Sensor::new(),
+                sensor: Box::new(Sensor::new()),
                 alarm_on: false,
             }
         }
@@ -42,16 +42,22 @@ pub mod tire_pressure_monitoring_system {
             Sensor { offset: 16.0 }
         }
 
-        pub fn pop_next_pressure_psi_value(&self) -> f64 {
-            let pressure_telemetry_value = Self::sample_pressure();
-            self.offset + pressure_telemetry_value
-        }
-
         fn sample_pressure() -> f64 {
             let mut rng = rand::thread_rng();
             let pressure_telemetry_value = 6.0 * rng.gen::<f64>() * rng.gen::<f64>();
             pressure_telemetry_value
         }
+    }
+
+    impl PressureSensor for Sensor { 
+        fn pop_next_pressure_psi_value(&self) -> f64 {
+            let pressure_telemetry_value = Self::sample_pressure();
+            self.offset + pressure_telemetry_value
+        }
+    }
+
+    pub trait PressureSensor {
+        fn pop_next_pressure_psi_value(&self) -> f64;
     }
 
     #[cfg(test)]
