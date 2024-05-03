@@ -49,7 +49,7 @@ pub mod tire_pressure_monitoring_system {
         }
     }
 
-    impl PressureSensor for Sensor { 
+    impl PressureSensor for Sensor {
         fn pop_next_pressure_psi_value(&self) -> f64 {
             let pressure_telemetry_value = Self::sample_pressure();
             self.offset + pressure_telemetry_value
@@ -64,7 +64,9 @@ pub mod tire_pressure_monitoring_system {
     mod tests {
         use crate::tire_pressure_monitoring_system::Sensor;
 
-        use super::Alarm;
+        use super::{Alarm, PressureSensor};
+
+        struct FakeSensor {}
 
         #[test]
         fn test_alarm_by_defaut_is_off() {
@@ -74,8 +76,13 @@ pub mod tire_pressure_monitoring_system {
 
         #[test]
         fn test_alarm_is_on_when_pressure_is_too_low() {
+            impl PressureSensor for FakeSensor {
+                fn pop_next_pressure_psi_value(&self) -> f64 {
+                    0.0
+                }
+            }
             let mut alarm = Alarm::new();
-            //alarm.sensor = ??
+            alarm.sensor = Box::new(FakeSensor {});
 
             alarm.check();
 
