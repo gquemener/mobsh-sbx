@@ -62,31 +62,42 @@ pub mod tire_pressure_monitoring_system {
 
     #[cfg(test)]
     mod tests {
-        use crate::tire_pressure_monitoring_system::Sensor;
 
         use super::{Alarm, PressureSensor};
 
-        struct FakeSensor {}
+        struct FakeSensor {
+            pressure: f64,
+        }
+        impl PressureSensor for FakeSensor {
+            fn pop_next_pressure_psi_value(&self) -> f64 {
+                self.pressure
+            }
+        }
 
         #[test]
         fn test_alarm_by_defaut_is_off() {
             let alarm = Alarm::new();
-            assert_eq!(false, alarm.is_alarm_on());
+            assert!(!alarm.is_alarm_on());
         }
 
         #[test]
         fn test_alarm_is_on_when_pressure_is_too_low() {
-            impl PressureSensor for FakeSensor {
-                fn pop_next_pressure_psi_value(&self) -> f64 {
-                    0.0
-                }
-            }
             let mut alarm = Alarm::new();
-            alarm.sensor = Box::new(FakeSensor {});
+            alarm.sensor = Box::new(FakeSensor { pressure: 0.0 });
 
             alarm.check();
 
-            assert_eq!(true, alarm.is_alarm_on());
+            assert!(alarm.is_alarm_on());
+        }
+
+        #[test]
+        fn test_alarm_is_on_when_pressure_is_too_high() {
+            let mut alarm = Alarm::new();
+            alarm.sensor = Box::new(FakeSensor { pressure: 50.0 });
+
+            alarm.check();
+
+            assert!(alarm.is_alarm_on());
         }
     }
 }
