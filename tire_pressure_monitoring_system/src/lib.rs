@@ -59,8 +59,8 @@ pub mod tire_pressure_monitoring_system {
         use super::{Alarm};
 
         #[test]
-        fn test_alarm() {
-            let mut alarm = Alarm::new();
+        fn test_alarm_by_defaut_is_off() {
+            let alarm = Alarm::new();
             assert_eq!(false, alarm.is_alarm_on());
         }
     }
