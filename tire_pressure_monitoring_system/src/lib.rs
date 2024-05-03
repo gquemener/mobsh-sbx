@@ -56,6 +56,8 @@ pub mod tire_pressure_monitoring_system {
 
     #[cfg(test)]
     mod tests {
+        use crate::tire_pressure_monitoring_system::Sensor;
+
         use super::Alarm;
 
         #[test]
@@ -66,7 +68,8 @@ pub mod tire_pressure_monitoring_system {
 
         #[test]
         fn test_alarm_is_on_when_pressure_is_too_low() {
-            let alarm = Alarm::new();
+            let mut alarm = Alarm::new();
+            //alarm.sensor = ??
 
             alarm.check();
 
